@@ -134,24 +134,172 @@ sleep 1;
 curl http://$website;
 ```
 
-### [Exercise 1.3]
+### [Exercise 1.8](https://github.com/sivosam/DevOps-Docker-course/tree/master/Part_1/1_8)
+Commands and output:
+```
+➜ touch logs.txt
+...
 
-### [Exercise 1.3]
+➜ docker run --name bind -v $(pwd)/logs.txt:/usr/app/logs.txt devopsdockeruh/first_volume_exercise                                                    
+(node:1) ExperimentalWarning: The fs.promises API is experimental
+Wrote to file /usr/app/logs.txt
+Wrote to file /usr/app/logs.txt
+Wrote to file /usr/app/logs.txt
+Wrote to file /usr/app/logs.txt
+```
+Logs:
+```
+Thu, 26 Dec 2019 11:42:46 GMT
+Thu, 26 Dec 2019 11:42:49 GMT
+Thu, 26 Dec 2019 11:42:52 GMT
+Thu, 26 Dec 2019 11:42:55 GMT
+Secret message is:
+"Volume bind mount is easy"
+Thu, 26 Dec 2019 11:43:01 GMT
+```
 
-### [Exercise 1.3]
+### [Exercise 1.9](https://github.com/sivosam/DevOps-Docker-course/blob/master/Part_1/1_9.txt)
+```
+➜ docker run -p 3000:80 devopsdockeruh/ports_exercise
+```
 
-### [Exercise 1.3]
+### [Exercise 1.10](https://github.com/sivosam/DevOps-Docker-course/tree/master/Part_1/1_10)
+Dockerfile:
+```
+FROM ubuntu:16.04
+WORKDIR /usr/src/app
+RUN apt-get update
+RUN  apt-get -y install curl
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash
+RUN apt-get install -y nodejs
+RUN apt-get install -y git
+RUN git clone https://github.com/docker-hy/frontend-example-docker.git .
+EXPOSE 5000
+RUN npm install
+CMD ["npm", "start"]
+```
+Commands:
+```  
+➜ docker build -t front .
 
-### [Exercise 1.3]
+➜ docker run -p 5000:5000 front 
 
-### [Exercise 1.3]
+```
 
-### [Exercise 1.3]
+### [Exercise 1.11](https://github.com/sivosam/DevOps-Docker-course/tree/master/Part_1/1_11)
+Dockerfile:
+```
+FROM ubuntu:16.04
+WORKDIR /usr/src/app
+RUN apt-get update
+RUN apt-get install -y curl
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash
+RUN apt-get install -y git
+RUN apt-get install -y nodejs
+RUN git clone https://github.com/docker-hy/backend-example-docker.git .
+EXPOSE 8000
+RUN npm install
+CMD ["npm", "start"]
+```
+Commands:
+```
+➜ docker build -t back .    
 
-### [Exercise 1.3]
-### [Exercise 1.3]
-### [Exercise 1.3]
+➜ docker run -p 8000:8000 -v $(pwd)/logs.txt:/usr/src/app/logs.txt back
+```
+Logs:
+```
+12/26/2019, 12:34:11 PM: Connection received in root
+12/26/2019, 12:34:41 PM: Connection received in root
+12/26/2019, 12:34:41 PM: Connection received in root
+12/26/2019, 12:34:42 PM: Connection received in root
+12/26/2019, 12:40:51 PM: Connection received in root
+```
 
-### [Exercise 1.3]
-### [Exercise 1.3]
-### [Exercise 1.3]
+### [Exercise 1.12](https://github.com/sivosam/DevOps-Docker-course/tree/master/Part_1/1_12)
+Backend dockerfile:
+```
+FROM ubuntu:16.04
+WORKDIR /usr/src/app
+RUN apt-get update
+RUN apt-get install -y curl
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash
+RUN apt-get install -y git
+RUN apt-get install -y nodejs
+RUN git clone https://github.com/docker-hy/backend-example-docker.git .
+EXPOSE 8000
+ENV FRONT_URL="http://localhost:5000"
+RUN npm install
+CMD ["npm", "start"]
+```
+Frontend dockerfile:
+```
+FROM ubuntu:16.04
+WORKDIR /usr/src/app
+RUN apt-get update
+RUN  apt-get -y install curl
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash
+RUN apt-get install -y nodejs
+RUN apt-get install -y git
+RUN git clone https://github.com/docker-hy/frontend-example-docker.git .
+EXPOSE 5000
+ENV API_URL="http://localhost:8000"
+RUN npm install
+CMD ["npm", "start"]
+```
+Commands:
+```
+➜ docker run -p 5000:5000 front
+...
+
+➜ docker run -p 8000:8000 -v $(pwd)/logs.txt:/usr/src/app/logs.txt back
+```
+
+### [Exercise 1.13](https://github.com/sivosam/DevOps-Docker-course/tree/master/Part_1/1_13)
+Dockerfile:
+```
+FROM openjdk:8
+RUN apt-get update && apt-get install -y git
+RUN git clone https://github.com/docker-hy/spring-example-project.git
+WORKDIR spring-example-project
+EXPOSE 8080
+RUN ./mvnw package
+CMD java -jar ./target/docker-example-1.1.3.jar
+```
+Commands:
+```  
+➜ docker build -t button .   
+
+➜ docker run -p 3000:8080 button
+```
+
+### [Exercise 1.14](https://github.com/sivosam/DevOps-Docker-course/tree/master/Part_1/1_14)
+Dockerfile:
+```
+FROM ruby:2.6.0
+WORKDIR /usr/src/app
+RUN apt-get update
+RUN apt-get install -y git
+RUN apt-get install -y nodejs
+RUN git clone https://github.com/docker-hy/rails-example-project.git .
+RUN gem install bundler
+RUN bundle install
+EXPOSE 3000
+RUN rails db:migrate
+CMD rails s
+```
+Commands:
+```  
+➜ docker build -t click .      
+
+➜ docker run -p 3000:3000 click
+```
+
+### [Exercise 1.15](https://github.com/sivosam/DevOps-Docker-course/blob/master/Part_1/1_15.txt)
+Link to dockerhub: https://hub.docker.com/repository/docker/sivosam/feedback
+
+### [Exercise 1.16](https://github.com/sivosam/DevOps-Docker-course/blob/master/Part_1/1_16.txt)
+Link to herokuapp: https://dockers-example.herokuapp.com/
+
+
+## Part 2
