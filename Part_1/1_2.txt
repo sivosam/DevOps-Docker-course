@@ -1,0 +1,8 @@
+DevOps-Docker-course on  master [?] 
+➜ docker ps -a
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+DevOps-Docker-course on  master [?] 
+➜ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+DevOps-Docker-course on  master [?] 
+➜

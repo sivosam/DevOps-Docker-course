@@ -1,0 +1,5 @@
+➜ docker ps -a
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                      PORTS               NAMES
+7f8f7bdc0440        nginx               "nginx -g 'daemon of…"   2 minutes ago       Up 2 minutes                80/tcp              nervous_rosalind
+1b9e15388384        nginx               "nginx -g 'daemon of…"   2 minutes ago       Exited (0) 12 seconds ago                       brave_elion
+e48d6ecb7374        nginx               "nginx -g 'daemon of…"   2 minutes ago       Exited (0) 31 seconds ago                       eager_driscoll

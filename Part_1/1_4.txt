@@ -1,0 +1,13 @@
+➜ docker run devopsdockeruh/exec_bash_exercise
+Unable to find image 'devopsdockeruh/exec_bash_exercise:latest' locally
+latest: Pulling from devopsdockeruh/exec_bash_exercise
+...
+
+➜ docker exec -it recursing_jepsen bash
+root@f20ddc63764c:/usr/app# tail -f ./logs.txt
+Thu, 19 Sep 2019 10:24:03 GMT
+Thu, 19 Sep 2019 10:24:06 GMT
+Thu, 19 Sep 2019 10:24:09 GMT
+Thu, 19 Sep 2019 10:24:12 GMT
+Secret message is:
+"Docker is easy"

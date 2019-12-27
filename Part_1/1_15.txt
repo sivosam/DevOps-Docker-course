@@ -1,0 +1,7 @@
+https://hub.docker.com/repository/docker/sivosam/feedback
+
+To run, use command
+
+docker run -it --rm -p 3000:3000 sivosam/feedback
+
+and open localhost:3000.
