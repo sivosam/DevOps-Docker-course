@@ -318,3 +318,69 @@ services:
       - ./logs.txt:/usr/app/logs.txt
     container_name: first_compose
 ```
+
+### [Exercise 2.2](https://github.com/sivosam/DevOps-Docker-course/tree/master/Part_2/2_2)
+docker-compose.yml:
+```
+version: '3.5'
+
+services:
+  ports_exercise:
+    image: devopsdockeruh/ports_exercise
+    ports:
+      - 3000:80
+```
+
+### [Exercise 2.3](https://github.com/sivosam/DevOps-Docker-course/tree/master/Part_2/2_3)
+docker-compose.yml:
+```
+version: '3.5'
+
+services:
+  front:
+    build: './frontend'
+    ports:
+      - 5000:5000
+    container_name: front
+  back:
+    build: './backend'
+    ports:
+      - 8000:8000
+    volumes:
+      - ./logs.txt:/usr/src/app/logs.txt
+    container_name: back
+```
+
+### [Exercise 2.4](https://github.com/sivosam/DevOps-Docker-course/tree/master/Part_2/2_4)
+commands:
+```
+➜ docker-compose up -d --scale compute=10
+```
+
+### [Exercise 2.5](https://github.com/sivosam/DevOps-Docker-course/tree/master/Part_2/2_5)
+docker-compose.yml:
+```
+version: '3.5'
+
+services:
+  backend:
+    image: back
+    build: .
+    ports:
+      - 8000:8000
+    environment:
+      - REDIS=redis
+    container_name: back
+  frontend:
+    image: front
+    build: .
+    ports:
+      - 5000:5000
+    container_name: front
+  redis:
+    image: redis
+    build: .
+    ports:
+      - 6379:6379
+    container_name: redis-backend
+```
