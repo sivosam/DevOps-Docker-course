@@ -303,3 +303,18 @@ Link to herokuapp: https://dockers-example.herokuapp.com/
 
 
 ## Part 2
+
+### [Exercise 2.1](https://github.com/sivosam/DevOps-Docker-course/tree/master/Part_2/2_1)
+docker-compose-yml: 
+```
+version: '3.5' 
+
+services: 
+
+  first_volume_exercise: 
+    image: devopsdockeruh/first_volume_exercise
+    build: . 
+    volumes: 
+      - ./logs.txt:/usr/app/logs.txt
+    container_name: first_compose
+```
