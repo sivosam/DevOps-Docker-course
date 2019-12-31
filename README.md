@@ -485,7 +485,7 @@ services:
       - 5000:5000
     container_name: front
     environment:
-      - API_URL=/api/
+      - API_URL=/api
   redis:
     image: redis
     build: .
@@ -549,7 +549,7 @@ services:
       - 5000:5000
     container_name: front
     environment:
-      - API_URL=/api/
+      - API_URL=/api
   redis:
     image: redis
     build: .
