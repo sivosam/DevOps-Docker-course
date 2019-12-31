@@ -1,0 +1,8 @@
+To get all the buttons to work, docker-compose.yml file needed a frontend environment variable:
+
+environment:
+  - API_URL=/api
+
+Since without that, the buttons still pointed to localhost:8000 and not to localhost/api, as was needed for nginx to route correctly.
+
+This was actually already done for exercise 2.8 (to get the first button working), so no additional changes were needed.

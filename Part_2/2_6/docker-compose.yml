@@ -1,0 +1,33 @@
+version: '3.5'
+
+services:
+  backend:
+    image: back
+    build: .
+    ports:
+      - 8000:8000
+    environment:
+      - REDIS=redis
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=pass
+      - DB_HOST=db
+    container_name: back
+  frontend:
+    image: front
+    build: .
+    ports:
+      - 5000:5000
+    container_name: front
+  redis:
+    image: redis
+    build: .
+    ports:
+      - 6379:6379
+    container_name: redis-backend
+  db:
+    image: postgres
+    build: .
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=pass
+    container_name: db_postgres
