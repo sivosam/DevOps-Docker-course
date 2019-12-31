@@ -384,3 +384,288 @@ services:
       - 6379:6379
     container_name: redis-backend
 ```
+### [Exercise 2.6](https://github.com/sivosam/DevOps-Docker-course/blob/master/Part_2/2_6)
+docker-compose.yml:
+```
+version: '3.5'
+
+services:
+  backend:
+    image: back
+    build: .
+    ports:
+      - 8000:8000
+    environment:
+      - REDIS=redis
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=pass
+      - DB_HOST=db
+    container_name: back
+  frontend:
+    image: front
+    build: .
+    ports:
+      - 5000:5000
+    container_name: front
+  redis:
+    image: redis
+    build: .
+    ports:
+      - 6379:6379
+    container_name: redis-backend
+  db:
+    image: postgres
+    build: .
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=pass
+    container_name: db_postgres
+```
+
+### [Exercise 2.7](https://github.com/sivosam/DevOps-Docker-course/blob/master/Part_2/2_7)
+docker-compose.yml:
+```
+version: '3.5'
+
+services:
+  backend:
+    image: ml_backend
+    build: .
+    ports:
+      - 5000:5000
+    depends_on:
+      - training
+    volumes:
+      - model:/src/model
+    container_name: backend
+
+  frontend: 
+    image: ml_frontend
+    build: .
+    ports:
+      - 3000:3000
+    container_name: frontend
+
+  training:
+    image: ml_training
+    build: .
+    volumes:
+      - model:/src/model
+      - imgs:/src/imgs
+      - data:/src/data
+    container_name: training
+
+volumes:
+  model:
+  imgs:
+  data:
+```
+
+### [Exercise 2.8](https://github.com/sivosam/DevOps-Docker-course/tree/master/Part_2/2_8)
+docker-compose.yml:
+```
+version: '3.5'
+
+services:
+  backend:
+    image: back
+    build: .
+    ports:
+      - 8000:8000
+    environment:
+      - REDIS=redis
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=pass
+      - DB_HOST=db
+    container_name: back
+  frontend:
+    image: front
+    build: .
+    ports:
+      - 5000:5000
+    container_name: front
+    environment:
+      - API_URL=/api/
+  redis:
+    image: redis
+    build: .
+    ports:
+      - 6379:6379
+    container_name: redis-backend
+  db:
+    image: postgres
+    build: .
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=pass
+    container_name: db_postgres
+  proxy:
+    image: nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+ ```
+nginx.conf:
+```
+events { worker_connections 1024; }
+
+http {
+  server {
+    listen 80;
+
+    location / {
+      proxy_pass http://front:5000/;
+    }
+
+    location /api/ {
+      proxy_pass http://back:8000/;
+    }
+  }
+}
+```
+
+### [Exercise 2.9](https://github.com/sivosam/DevOps-Docker-course/tree/master/Part_2/2_9)
+docker-compose.yml:
+```
+version: '3.5'
+
+services:
+  backend:
+    image: back
+    build: .
+    ports:
+      - 8000:8000
+    environment:
+      - REDIS=redis
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=pass
+      - DB_HOST=db
+    container_name: back
+  frontend:
+    image: front
+    build: .
+    ports:
+      - 5000:5000
+    container_name: front
+    environment:
+      - API_URL=/api/
+  redis:
+    image: redis
+    build: .
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - 6379:6379
+    volumes:
+      - ./data:/data
+    
+    container_name: redis-backend
+  db:
+    image: postgres
+    build: .
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=pass
+    volumes:
+      - ./database:/var/lib/postgresql/data
+    container_name: db_postgres
+  proxy:
+    image: nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+
+volumes:
+ database:
+ data:
+ ```
+
+### [Exercise 2.10](https://github.com/sivosam/DevOps-Docker-course/tree/master/Part_2/2_10)
+To get all the buttons to work, docker-compose.yml file needed a frontend environment variable:
+
+environment:
+  - API_URL=/api
+
+Since without that, the buttons still pointed to localhost:8000 and not to localhost/api, 
+as was needed for nginx to route correctly.
+
+This was actually already done for exercise 2.8 (to get the first button working), 
+so no additional changes were needed.
+
+
+docker-compose.yml:
+```
+version: '3.5'
+
+services:
+  backend:
+    image: back
+    build: .
+    ports:
+      - 8000:8000
+    environment:
+      - REDIS=redis
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=pass
+      - DB_HOST=db
+    container_name: back
+  frontend:
+    image: front
+    build: .
+    ports:
+      - 5000:5000
+    environment:
+      - API_URL=/api
+    container_name: front
+  redis:
+    image: redis
+    build: .
+    ports:
+      - 6379:6379
+    container_name: redis-backend
+  db:
+    image: postgres
+    build: .
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=pass
+    container_name: db_postgres
+  proxy:
+    image: nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+```
+Backend dockerfile:
+```
+FROM ubuntu:16.04
+WORKDIR /usr/src/app
+RUN apt-get update
+RUN apt-get install -y curl
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash
+RUN apt-get install -y git
+RUN apt-get install -y nodejs
+RUN git clone https://github.com/docker-hy/backend-example-docker.git .
+EXPOSE 8000
+ENV FRONT_URL="http://localhost:5000"
+RUN npm install
+CMD ["npm", "start"]
+```
+
+Frontend dockerfile:
+```
+FROM ubuntu:16.04
+WORKDIR /usr/src/app
+RUN apt-get update
+RUN  apt-get -y install curl
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash
+RUN apt-get install -y nodejs
+RUN apt-get install -y git
+RUN git clone https://github.com/docker-hy/frontend-example-docker.git .
+EXPOSE 5000
+ENV API_URL="http://localhost:8000"
+RUN npm install
+CMD ["npm", "start"]
+```
