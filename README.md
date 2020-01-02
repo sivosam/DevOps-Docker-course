@@ -669,3 +669,85 @@ ENV API_URL="http://localhost:8000"
 RUN npm install
 CMD ["npm", "start"]
 ```
+
+## Part 3
+
+### [Exercise 3.1](https://github.com/sivosam/DevOps-Docker-course/tree/master/Part_3/3_1)
+BEFORE OPTIMIZATION:
+Frontend image: 532MB
+Backend image: 515MB
+TOTAL: 1050MB
+
+AFTER OPTIMIZATION:
+Frontend image: 487MB
+Backend image: 486MB
+TOTAL: 973MB
+
+Both include a clone from the respective examples, which might explain the greater file size.
+
+Backend dockerfile:
+```
+FROM ubuntu:16.04
+EXPOSE 8000
+ENV FRONT_URL="http://localhost:5000"
+RUN apt-get update && apt-get install -y \
+	curl git npm && \
+    curl -sL https://deb.nodesource.com/setup_10.x | bash && \
+    git init . && \
+    git remote add origin https://github.com/docker-hy/backend-example-docker && \
+    git pull origin master && \
+    npm install npm@latest -g && \
+    apt-get purge -y --auto-remove curl git && \ 
+    rm -rf /var/lib/apt/lists/*
+CMD ["npm", "start"]
+```
+
+Frontend dockerfile:
+```
+FROM ubuntu:16.04
+EXPOSE 5000
+ENV API_URL="http://localhost:8000"
+RUN apt-get update && apt-get install -y \
+    curl git npm && \
+    curl -sL https://deb.nodesource.com/setup_10.x | bash && \
+    git init . && \
+    git remote add origin https://github.com/docker-hy/frontend-example-docker && \
+    git pull origin master && \
+    npm install npm@latest -g && \
+    apt-get purge -y --auto-remove curl git && \
+    rm -rf /var/lib/apt/lists/*
+CMD ["npm", "start"]
+```
+
+### [Exercise 3.2](https://github.com/sivosam/DevOps-Docker-course/tree/master/Part_3/3_2)
+Commands used:
+```
+➜ docker build -t yle-dl .
+
+➜ docker run -v "$(pwd)":/videos yle-dl https://areena.yle.fi/1-50288906
+
+yle-dl 20191231: Download media files from Yle Areena and Elävä Arkisto
+...
+```
+Dockerfile:
+```
+FROM ubuntu:16.04
+
+ENV LC_ALL=C.UTF-8
+
+RUN apt-get update && apt-get install -y \
+	python ffmpeg python-pip wget && \
+	pip install yle-dl && \
+	rm -rf /var/lib/apt/lists/*
+	
+WORKDIR /videos	
+ENTRYPOINT ["yle-dl"]
+```
+
+Or....
+Alternative, much simpler dockerfile (which feels a bit like cheating, but is half the size of the previous one. Then again, doing it this way does go against the spirit of the exercise):
+```
+FROM taskinen/yle-dl
+WORKDIR /videos
+ENTRYPOINT ["yle-dl"]
+```
