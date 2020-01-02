@@ -1,0 +1,4 @@
+
+FROM taskinen/yle-dl
+WORKDIR /videos
+ENTRYPOINT ["yle-dl"]

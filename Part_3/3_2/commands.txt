@@ -1,0 +1,6 @@
+➜ docker build -t yle-dl .
+
+➜ docker run -v "$(pwd)":/videos yle-dl https://areena.yle.fi/1-50288906
+
+yle-dl 20191231: Download media files from Yle Areena and Elävä Arkisto
+...

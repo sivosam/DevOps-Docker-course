@@ -1,0 +1,11 @@
+BEFORE OPTIMIZATION:
+Frontend image: 532MB
+Backend image: 515MB
+TOTAL: 1050MB
+
+AFTER OPTIMIZATION:
+Frontend image: 487MB
+Backend image: 486MB
+TOTAL: 973MB
+
+Both include a clone from the respective examples, which might explain the greater file size.
