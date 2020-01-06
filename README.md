@@ -751,3 +751,131 @@ FROM taskinen/yle-dl
 WORKDIR /videos
 ENTRYPOINT ["yle-dl"]
 ```
+### [Exercise 3.3](https://github.com/sivosam/DevOps-Docker-course/tree/master/Part_3/3_3)
+Backend dockerfile:
+```
+FROM ubuntu:16.04
+EXPOSE 8000
+ENV FRONT_URL="http://localhost:5000"
+WORKDIR /app
+COPY . .
+RUN apt-get update && apt-get install -y \
+    curl && \
+    curl -sL https://deb.nodesource.com/setup_10.x | bash && \
+    apt-get install -y nodejs && \
+    npm install && \
+    apt-get purge -y --auto-remove curl && \ 
+    rm -rf /var/lib/apt/lists/* && \
+    useradd -m app && chown -R app /app
+USER app
+CMD ["npm", "start"]
+```
+Frontend dockerfile:
+```
+FROM ubuntu:16.04
+EXPOSE 5000
+ENV API_URL="http://localhost:8000"
+WORKDIR /app
+COPY . .
+RUN apt-get update && apt-get install -y \
+	curl && \
+	curl -sL https://deb.nodesource.com/setup_10.x | bash && \
+	apt-get install -y nodejs && \
+	npm install && \
+	apt-get purge -y --auto-remove curl && \
+	rm -rf /var/lib/apt/lists/* && \
+	useradd -m app && chown -R app /app
+USER app
+CMD ["npm", "start"]
+```
+
+### [Exercise 3.4](https://github.com/sivosam/DevOps-Docker-course/tree/master/Part_3/3_4)
+BEFORE OPTIMIZATION: 
+Frontend image: 430MB 
+Backend image: 332MB 
+TOTAL: 762MB
+
+AFTER OPTIMIZATION: 
+Frontend image: 266MB 
+Backend image: 170MB 
+TOTAL: 436MB
+
+Backend dockerfile:
+```
+FROM node:alpine
+EXPOSE 8000
+ENV FRONT_URL="http://localhost:5000"
+WORKDIR /app
+COPY . .
+RUN npm install && \
+    adduser -S -D app && chown -R app /app
+USER app
+CMD ["npm", "start"]
+```
+Frontend dockerfile:
+```
+FROM node:alpine
+EXPOSE 5000
+ENV API_URL="http://localhost:8000"
+WORKDIR /app
+COPY . .
+RUN npm install && \
+    adduser -D -S app && chown -R app /app
+USER app
+CMD ["npm", "start"]
+```
+### [Exercise 3.5](https://github.com/sivosam/DevOps-Docker-course/tree/master/Part_3/3_5/frontend)
+Dockerfile:
+```
+FROM node:alpine as build-stage
+WORKDIR /app
+COPY . .
+RUN npm install && \
+    npm run build
+
+FROM node:alpine
+EXPOSE 5000
+ENV API_URL="http://localhost:8000"
+WORKDIR /app
+COPY --from=build-stage /app/dist/ /app/dist/
+
+RUN npm install -g serve && \
+    adduser -D app && chown -R app /app
+USER app
+CMD ["serve", "-s", "-l", "5000", "dist"]
+```
+### [Exercise 3.6](https://github.com/sivosam/DevOps-Docker-course/tree/master/Part_3/3_6/feedback)
+Optimization reduced size from 394MB to 242MB
+
+Old dockerfile:
+```
+FROM node:lts-slim
+WORKDIR /usr/src/app
+RUN apt-get update && apt-get install -y git
+RUN git clone https://github.com/sivosam/feedback.git .
+EXPOSE 3000
+RUN npm install
+CMD ["npm", "start"]
+```
+New dockerfile:
+```
+FROM node:alpine as build
+WORKDIR /usr/src/app
+RUN apk add --no-cache git && \
+	git init . && \
+	git remote add origin https://github.com/sivosam/feedback && \
+	git pull origin master && \
+	npm install && npm run build
+
+FROM node:alpine
+WORKDIR /app
+EXPOSE 3000
+COPY --from=build /usr/src/app /app
+
+RUN npm install -g serve && \
+	adduser -D app && \
+	chown -R app /app
+USER app
+
+CMD ["serve", "-s", "-l", "3000", "build"]
+```
