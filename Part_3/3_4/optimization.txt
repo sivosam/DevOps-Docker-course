@@ -1,0 +1,3 @@
+BEFORE OPTIMIZATION: Frontend image: 430MB Backend image: 332MB TOTAL: 762MB
+
+AFTER OPTIMIZATION: Frontend image: 266MB Backend image: 170MB TOTAL: 436MB

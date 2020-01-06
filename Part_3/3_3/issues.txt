@@ -1,0 +1,2 @@
+For some reason I simply could not get the previous implementation working with user settings, so I had to build new dockerfiles for the examples.
+Git clone commands were also removed to reduce size (and build time, which got enormously annoying when troubleshooting)
