@@ -879,3 +879,11 @@ USER app
 
 CMD ["serve", "-s", "-l", "3000", "build"]
 ```
+### [Exercise 3.7b](https://github.com/sivosam/DevOps-Docker-course/blob/master/Part_3/3_7.md)
+
+#### When to use Docker
+A common problem in software development is an app that works on one machine (the developers own, for example), but not on colleague’s, or certain user’s machine. Since the issue could be due to an unlimited number of reasons, solving it machine by machine can be almost impossible and certainly wasteful. Docker is one attempt at reducing the problem, by having an app and all its dependencies installed within an isolated image and then run in an isolated container (or containers). Thus the problem should no longer arise due to a missing dependency, incompatible versions or some conflict with other installed applications.
+
+Docker is a good tool to use when, for example, you want to quickly try out a piece of software. You can download an image from Docker hub, run it and delete it without much of a hassle. Additionally, no configuration is necessary, since everything can be packaged right into the image. Docker is also extremely useful for projects where more than one dev is required, as highlighted above. When development is done with multiple machines and by multiple people, having all the dependencies and such in a (relatively) small image, ready to be downloaded and ran in a container, certainly reduces problems.
+
+Docker is not a be-all end-all solution though. Running containers means sacrificing performance, for example. In small projects this may not even be noticeable, but does certainly compound with bigger ones. Secondly, while Docker does provide a measure of security due to isolated containers, the containers still have access to the host operating system. Thus a mistake with setting up privileges, or simply a malicious container, can pose a great risk.
